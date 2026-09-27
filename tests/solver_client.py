@@ -1,7 +1,7 @@
 import argparse, os, sys, requests
 
 DEFAULT_SERVER = "http://127.0.0.1:8000"
-DEFAULT_NOPECHA_KEY = os.environ.get("NOPECHA_API_KEY", "key")
+DEFAULT_NOPECHA_KEY = os.environ.get("NOPECHA_API_KEY", "")
 DEFAULT_SITEKEY = "a9b5fb07-92ff-493f-86fe-352a2803b3df"
 DEFAULT_HOST = "discord.com"
 
@@ -15,9 +15,9 @@ class SolverClient:
         try: return requests.get(f"{self.server_url}/health", timeout=5).status_code == 200
         except Exception: return False
 
-    def solve(self, nopecha_key: str = DEFAULT_NOPECHA_KEY, sitekey: str = DEFAULT_SITEKEY, host: str = DEFAULT_HOST, proxy: str = None, timeout: float = 60.0) -> dict:
+    def solve(self, nopecha_key: str = DEFAULT_NOPECHA_KEY, sitekey: str = DEFAULT_SITEKEY, host: str = DEFAULT_HOST, proxy: str = None, rqdata: str = None, timeout: float = 60.0) -> dict:
         try:
-            r = requests.post(f"{self.server_url}/solve", json={"nopecha_key": nopecha_key, "sitekey": sitekey, "host": host, "proxy": proxy, "timeout": timeout}, timeout=timeout + 10)
+            r = requests.post(f"{self.server_url}/solve", json={"nopecha_key": nopecha_key, "sitekey": sitekey, "host": host, "proxy": proxy, "rqdata": rqdata, "timeout": timeout}, timeout=timeout + 10)
             return r.json()
         except Exception as e:
             return {"success": False, "error": f"Invalid JSON response: {e}"}
@@ -29,6 +29,7 @@ def main():
     parser.add_argument("--sitekey", default=DEFAULT_SITEKEY)
     parser.add_argument("--host", default=DEFAULT_HOST)
     parser.add_argument("--proxy", default=None)
+    parser.add_argument("--rqdata", default=None)
     args = parser.parse_args()
 
     client = SolverClient(server_url=args.server)
@@ -38,7 +39,7 @@ def main():
         sys.exit(1)
 
     print(f"{COLOR_CYAN}[*] INFO{COLOR_RESET} Requesting hCaptcha token for host={args.host} sitekey={args.sitekey} proxy={args.proxy}...")
-    res = client.solve(nopecha_key=args.nopecha_key, sitekey=args.sitekey, host=args.host, proxy=args.proxy)
+    res = client.solve(nopecha_key=args.nopecha_key, sitekey=args.sitekey, host=args.host, proxy=args.proxy, rqdata=args.rqdata)
 
     if res.get("success"):
         print(f"{COLOR_GREEN}[+] INFO{COLOR_RESET} SUCCESS [{res.get('elapsed_seconds')}s] Token: {res.get('token')}")
