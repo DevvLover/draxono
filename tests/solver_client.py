@@ -1,7 +1,7 @@
 import argparse, os, sys, requests
 
 DEFAULT_SERVER = "http://127.0.0.1:8000"
-DEFAULT_NOPECHA_KEY = os.environ.get("NOPECHA_API_KEY", "sub_1U8nZoCRwBwvt6pt891WudkT")
+DEFAULT_NOPECHA_KEY = os.environ.get("NOPECHA_API_KEY", "key")
 DEFAULT_SITEKEY = "a9b5fb07-92ff-493f-86fe-352a2803b3df"
 DEFAULT_HOST = "discord.com"
 
