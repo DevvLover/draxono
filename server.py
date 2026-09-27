@@ -55,11 +55,11 @@ def handle_solve():
         return jsonify({"success": False, "error": "No valid key found."}), 400
 
     sitekey, host = d.get("sitekey", DEFAULT_SITEKEY), d.get("host", DEFAULT_HOST)
-    proxy, timeout = d.get("proxy"), float(d.get("timeout", 30.0))
+    proxy, rqdata, timeout = d.get("proxy"), d.get("rqdata"), float(d.get("timeout", 30.0))
 
     logger.info(f"Solve request -> host={host} sitekey={sitekey} proxy={proxy}")
     try:
-        res = solve(nopecha_key=key, sitekey=sitekey, host=host, proxy=proxy, timeout=timeout)
+        res = solve(nopecha_key=key, sitekey=sitekey, host=host, proxy=proxy, rqdata=rqdata, timeout=timeout)
         passed = res.get("pass", False)
         status = 200 if passed else 422
         log_fn = logger.info if passed else logger.warning
