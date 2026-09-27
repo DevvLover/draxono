@@ -31,6 +31,7 @@ def solve(
     sitekey: str = DEFAULT_SITEKEY,
     host: str = DEFAULT_HOST,
     proxy: Optional[str] = None,
+    rqdata: Optional[str] = None,
     timeout: float = 30.0
 ) -> Dict[str, Any]:
     session = requests.Session()
@@ -54,6 +55,8 @@ def solve(
         "n": "fail", "e": "asset-error", "c": json.dumps(site_config),
         "clientOptions": json.dumps(client_options),
     }
+    if rqdata:
+        getcap_payload1["rqdata"] = rqdata
 
     hcap_url1 = f"https://api.hcaptcha.com/getcaptcha/{sitekey}"
     resp1 = session.post(hcap_url1, data=urllib.parse.urlencode(getcap_payload1), timeout=timeout)
@@ -92,6 +95,8 @@ def solve(
         "motionData": motion_data, "pdc": json.dumps(pdc), "pem": json.dumps(pem2),
         "n": proof, "c": json.dumps(c_obj), "clientOptions": json.dumps(client_options),
     }
+    if rqdata:
+        getcap_payload3["rqdata"] = rqdata
 
     hcap_url2 = f"https://api2.hcaptcha.com/getcaptcha/{sitekey}"
     resp3 = session.post(hcap_url2, data=urllib.parse.urlencode(getcap_payload3), headers={"Accept": "application/json"}, timeout=timeout)
